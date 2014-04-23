@@ -38,17 +38,7 @@ public class MyCountUp implements Runnable {
 		System.out.println("カウントアップの間隔をミリ秒で入力してください。");
 
 		// 入力受付＆チェック
-		int millisecond = 0;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		try {
-			millisecond = Integer.parseInt(reader.readLine());
-		} catch (NumberFormatException e) {
-			System.out.println("数値の形式が正しくありません。");
-			return;
-		} catch (IOException e) {
-			System.out.println("入力読み込みで予期せぬエラーが発生しました。");
-			return;
-		}
+		int millisecond = getInputMilliSecond();
 
 		// エンターキーガイド
 		System.out.println("エンターキーを押すとカウントアップを開始します。");
@@ -56,26 +46,60 @@ public class MyCountUp implements Runnable {
 
 		// エンター受付＆カウントアップ実行
 		MyCountUp myCountUp = new MyCountUp(millisecond);
+		startCountUp(myCountUp);
+
+		// エンター受付＆カウントアップ終了
+		stopCountUp(myCountUp);
+	}
+
+	/**
+	 * 入力受付＆数値チェック
+	 * 数値かどうかだけをチェックする（数値の範囲はチェックしない）
+	 * @return 入力されたミリ秒の数値
+	 */
+	private static int getInputMilliSecond() {
+		
+		int millisecond = 0;
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			millisecond = Integer.parseInt(reader.readLine());
+		} catch (NumberFormatException e) {
+			System.out.println("数値の形式が正しくありません。");
+			return Integer.MIN_VALUE;
+		} catch (IOException e) {
+			System.out.println("入力読み込みで予期せぬエラーが発生しました。");
+			return Integer.MIN_VALUE;
+		}
+		return millisecond;
+	}
+
+	/**
+	 * エンターキー受付＆カウントアップ開始	
+	 */
+	private static void startCountUp(MyCountUp countUpObject) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			String line = reader.readLine();
-			new Thread(myCountUp).start();
+			new Thread(countUpObject).start();
 		} catch (IOException e) {
 			System.out.println("入力読み込みで予期せぬエラーが発生しました。");
 			return;
 		}
+	}
 
-
-		// エンター受付＆カウントアップ終了
+	/**
+	 * エンターキー受付＆カウントアップ終了
+	 */
+	private static void stopCountUp(MyCountUp countUpObject) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			String line = reader.readLine();
-			myCountUp.stopRunning();
+			countUpObject.stopRunning();
 			System.out.println("終了します。");
 		} catch (IOException e) {
 			System.out.println("入力読み込みで予期せぬエラーが発生しました。");
 			return;
 		}
-
-
 	}
 
 }
